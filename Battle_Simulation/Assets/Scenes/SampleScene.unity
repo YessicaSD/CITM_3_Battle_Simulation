@@ -170,8 +170,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characters:
-  - {fileID: 8243413891737626317}
+  - {fileID: 8243413891737626320}
   - {fileID: 746538721}
+  numberOfRounds: 10
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -436,7 +437,7 @@ PrefabInstance:
         type: 3}
       propertyPath: enemy
       value: 
-      objectReference: {fileID: 8243413891737626317}
+      objectReference: {fileID: 8243413891737626320}
     - target: {fileID: 5175266620728811625, guid: c7ce358c814a8744d86355526d44eaf6,
         type: 3}
       propertyPath: speed
@@ -477,6 +478,26 @@ PrefabInstance:
       propertyPath: specialAttacks.Array.data[0].damage
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 5175266620728811625, guid: c7ce358c814a8744d86355526d44eaf6,
+        type: 3}
+      propertyPath: maxLife
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 5175266620728811625, guid: c7ce358c814a8744d86355526d44eaf6,
+        type: 3}
+      propertyPath: strength
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5175266620728811625, guid: c7ce358c814a8744d86355526d44eaf6,
+        type: 3}
+      propertyPath: defaultAttackPercentage
+      value: 0.46
+      objectReference: {fileID: 0}
+    - target: {fileID: 5175266620728811625, guid: c7ce358c814a8744d86355526d44eaf6,
+        type: 3}
+      propertyPath: log
+      value: 
+      objectReference: {fileID: 1340151964}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c7ce358c814a8744d86355526d44eaf6, type: 3}
 --- !u!224 &746538720 stripped
@@ -692,6 +713,83 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1340151962
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1340151963}
+  - component: {fileID: 1340151965}
+  - component: {fileID: 1340151964}
+  m_Layer: 5
+  m_Name: logText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1340151963
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1340151962}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1943348094}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -372.7, y: -23.1}
+  m_SizeDelta: {x: 250.5, y: 552.2}
+  m_Pivot: {x: 0.5000001, y: 0.5}
+--- !u!114 &1340151964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1340151962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: 
+--- !u!222 &1340151965
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1340151962}
+  m_CullTransparentMesh: 0
 --- !u!1 &1770368933
 GameObject:
   m_ObjectHideFlags: 0
@@ -863,6 +961,7 @@ RectTransform:
   - {fileID: 746538720}
   - {fileID: 389814609}
   - {fileID: 1076728634}
+  - {fileID: 1340151963}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1110,23 +1209,58 @@ PrefabInstance:
       propertyPath: defaultDamagePercentage
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5175266620728811625, guid: c7ce358c814a8744d86355526d44eaf6, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: c7ce358c814a8744d86355526d44eaf6, type: 3}
---- !u!114 &8243413891737626317 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5175266620728811625, guid: c7ce358c814a8744d86355526d44eaf6,
-    type: 3}
-  m_PrefabInstance: {fileID: 8243413891737626316}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93262170e8cbf2c4fbf88b8b61b3f36a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &8243413891737626318 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1414430236850987806, guid: c7ce358c814a8744d86355526d44eaf6,
     type: 3}
   m_PrefabInstance: {fileID: 8243413891737626316}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &8243413891737626319 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4794816325617150808, guid: c7ce358c814a8744d86355526d44eaf6,
+    type: 3}
+  m_PrefabInstance: {fileID: 8243413891737626316}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8243413891737626320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8243413891737626319}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5efc6b770b0f304382bf8c4f50e2e43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nameTxt: {fileID: 0}
+  name: Nwor
+  log: {fileID: 1340151964}
+  level: 1
+  maxLife: 100
+  maxMana: 50
+  currentLife: 0
+  currentMana: 0
+  strength: 2
+  speed: 3
+  healingValue: 5
+  manaRegeneration: 5
+  enemy: {fileID: 746538721}
+  specialAttacks: []
+  numOfTimesWin: 0
+  numOfTimesLose: 0
+  numOfTimesSimulations: 0
+  AllActions: []
+  PossibleActions: []
+  lifeBar: {fileID: 0}
+  ManaBar: {fileID: 0}
+  defaultAttackPercentage: 0.5
+  percentageOfDamageAtCut: 0.75
+  percentageOfHealAtCut: 0.5
+  manaNeedCut: 15
+  percentageOfDamagingYourself: 1
+  percentageOfDamagingEnemy: 2
+  manaNeedGeaBlessing: 20

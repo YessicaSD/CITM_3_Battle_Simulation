@@ -1,13 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using UnityEngine.UI;
+
 
 
 public class BattleAction:MonoBehaviour
 {
+    public string name;
+    public Text log;
+
+    public BattleAction(string name, ref Text log)
+    {
+        this.name = name;
+        this.log = log;
+    }
     public virtual void Execute(Character activeCharacter)
-    {}
+    {
+        //log.text += "\n " + activeCharacter.name + " have used " + name;
+        // Debug.Log(activeCharacter.name + "have used " + name);
+    }
     public virtual bool IsValid(Character activeCharacter)
     { return true; }
 };
@@ -15,32 +28,42 @@ public class BattleAction:MonoBehaviour
 public class AttackAction: BattleAction
 {
     public Character enemy;
-    float percentage = 1;
-    public AttackAction(Character enemy, float percentage)
+
+    public AttackAction(string name, ref  Text log,ref Character enemy): base(name, ref log)
     {
         this.enemy = enemy;
-        this.percentage = percentage;
     }
-    public AttackAction(Character enemy)
+
+    public override void Execute(Character activeCharacter)
     {
-        this.enemy = enemy;
+        base.Execute(activeCharacter);
+    }
+    public void ReduceLife(Character activeCharacter, float percentage)
+    {
+        activeCharacter.currentLife -= activeCharacter.strength * percentage;
+        if (activeCharacter.currentLife < 0)
+        {
+            activeCharacter.currentLife = 0;
+        }
+        activeCharacter.UpdateLifeBar();
+    }
+}
+public class DefaultAttack: AttackAction
+{
+    float percentageDamage;
+    public DefaultAttack(string name, ref Text log, Character enemy, float damage) : base(name, ref log, ref enemy)
+    {
+        this.percentageDamage = damage;
     }
     public override void Execute(Character activeCharacter)
     {
-        
-        Debug.Log(activeCharacter.name + "is attacking");
-        if (enemy.defence >= activeCharacter.strength)
-        {
-            return;
-        }
-        enemy.currentLife -= (activeCharacter.strength*percentage - enemy.defence);
+        base.Execute(activeCharacter);
+        enemy.currentLife -= activeCharacter.strength * percentageDamage;
         if(enemy.currentLife<0)
         {
             enemy.currentLife = 0;
         }
-            enemy.UpdateLifeBar();
     }
-
 }
 public class SpecialAttackAction: AttackAction
 {
@@ -48,7 +71,8 @@ public class SpecialAttackAction: AttackAction
     public float manaNeed;
     public float damage;
     public float heal;
-    public SpecialAttackAction(string name,float damage,float manaNeed, float heal, Character enemy) : base(enemy)
+
+    public SpecialAttackAction(string name, ref Text log , float damage,float manaNeed, float heal, Character enemy) : base(name, ref log, ref enemy)
     {
         this.damage = damage;
         this.manaNeed = manaNeed;
@@ -56,14 +80,11 @@ public class SpecialAttackAction: AttackAction
     }
     public override void Execute(Character activeCharacter)
     {
-        Debug.Log(activeCharacter.name + "have used " + name);
+        base.Execute(activeCharacter);
+       // Debug.Log(activeCharacter.name + "have used " + name);
         if(damage>0)
         {
-            if (enemy.defence >= damage)
-            {
-                return;
-            }
-            enemy.currentLife -= (damage - enemy.defence);
+            enemy.currentLife -= (damage);
             if (enemy.currentLife < 0)
             {
                 enemy.currentLife = 0;
@@ -85,27 +106,27 @@ public class SpecialAttackAction: AttackAction
     }
 }
 
-public class DefenceAction: BattleAction
-{
-    public override void Execute(Character activeCharacter)
-    {}
-}
-
 public class HealAction : BattleAction
 {
+    public HealAction(string name, ref Text log) : base(name, ref log)
+    { }
     public override void Execute(Character activeCharacter)
     {
-        Debug.Log(activeCharacter.name + "is healing");
-        activeCharacter.currentLife += activeCharacter.healingValue;
-        if(activeCharacter.currentLife> activeCharacter.life)
+        base.Execute(activeCharacter);
+        if (activeCharacter.currentLife == 0) 
         {
-            activeCharacter.currentLife = activeCharacter.life;
+            return;
+        }
+        activeCharacter.currentLife += activeCharacter.healingValue;
+        if(activeCharacter.currentLife> activeCharacter.maxLife)
+        {
+            activeCharacter.currentLife = activeCharacter.maxLife;
         }
         activeCharacter.UpdateLifeBar();
     }
     public override bool IsValid(Character activeCharacter)
     {
-        return activeCharacter.currentLife != activeCharacter.life;
+        return activeCharacter.currentLife != activeCharacter.maxLife;
     }
 }
 [System.Serializable]
@@ -125,52 +146,56 @@ public struct SpecialAttackInfo
 }
 public class Character : MonoBehaviour
 {
-    Text nameTxt;
+    [HideInInspector] public Text nameTxt;
     public string name;
+    public Text log;
 
-    public float life;
-    [HideInInspector] public float currentLife;
+    public int level = 1;
+    public float maxLife;
     public float maxMana;
+    [HideInInspector] public float currentLife;
     [HideInInspector] public float currentMana;
-
     public float strength;
-    public float defence;
     public float speed;
     public float healingValue;
     public float manaRegeneration;
     public Character enemy;
-    public float defaultDamagePercentage;
+    
     public List<SpecialAttackInfo> specialAttacks = new List<SpecialAttackInfo>();
 
-    List<BattleAction> AllActions = new List<BattleAction>();
-    List<BattleAction> PossibleActions = new List<BattleAction>();
+    [HideInInspector] public int numOfTimesWin = 0;
+    [HideInInspector] public int numOfTimesLose = 0;
+    [HideInInspector] public int numOfTimesSimulations = 0;
+
+    [HideInInspector] public List<BattleAction> AllActions = new List<BattleAction>();
+    [HideInInspector] public List<BattleAction> PossibleActions = new List<BattleAction>();
 
     [HideInInspector] public Slider lifeBar;
     [HideInInspector] public Slider ManaBar;
-    
-    // Start is called before the first frame update
-    void Start()
+
+    [Header("Default Attack")]
+    public float defaultAttackPercentage;
+    public void loadInfo()
     {
+        GameObject goText = GameObject.Find("logText");
+        log = goText.GetComponent<Text>();
         nameTxt = gameObject.GetComponent<Text>();
         nameTxt.text = name;
-        foreach (SpecialAttackInfo attack in specialAttacks)
-        {
-            AllActions.Add(new SpecialAttackAction(attack.name, attack.damage, attack.manaNeed, attack.heal, enemy));
-        }
-      
-
-        AllActions.Add(new AttackAction(enemy, defaultDamagePercentage));
-        AllActions.Add(new HealAction());
-        currentLife = life;
+       
         lifeBar = transform.Find("LifeBar").GetComponent<Slider>();
         ManaBar = transform.Find("ManaBar").GetComponent<Slider>();
-
+        ResetValues();
     }
-
-    // Update is called once per frame
-    void Update()
+    void Start()
     {
-       
+        loadInfo();
+
+        foreach (SpecialAttackInfo attack in specialAttacks)
+        {
+            AllActions.Add(new SpecialAttackAction(attack.name, ref log, attack.damage, attack.manaNeed, attack.heal, enemy));
+        }
+        AllActions.Add(new DefaultAttack("Basic Attack", ref log,enemy, defaultAttackPercentage));
+        AllActions.Add(new HealAction("Heal", ref log));
     }
     public void AddPossibleActions()
     {
@@ -186,7 +211,7 @@ public class Character : MonoBehaviour
     }
     public void UpdateLifeBar()
     {
-        lifeBar.value = currentLife / life;
+        lifeBar.value = currentLife / maxLife;
        
     }
     public void UpdateManaBar()
@@ -196,5 +221,34 @@ public class Character : MonoBehaviour
     public BattleAction ChooseAction()
     {
         return PossibleActions[Random.Range(0, PossibleActions.Count)];
+    }
+    public void ResetValues()
+    {
+        currentLife = maxLife;
+        currentMana = maxMana;
+        UpdateLifeBar();
+        UpdateManaBar();
+    }
+    public virtual void Report()
+    {
+        //"Character name",
+        //"Hp",
+        //"Strenght",
+        //"Speed",
+        //"Num Wins",
+        //"Num Defeats",
+        //"Num simulations",
+        //"TimeStamp"
+        string[] content = new string[7]
+        {
+            name,
+            maxLife.ToString(),
+            strength.ToString(),
+            speed.ToString(),
+            numOfTimesWin.ToString(),
+            numOfTimesLose.ToString(),
+            (numOfTimesWin + numOfTimesLose).ToString(),
+        };
+        ExcelExporter.AppendToReport(content);
     }
 }
